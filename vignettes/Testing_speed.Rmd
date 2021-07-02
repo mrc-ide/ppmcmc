@@ -45,7 +45,7 @@ x
 
 We can test the efficiency impact of modifying row-wise or column-wise:
 
-```{r, message=FALSE, fig.width=7}
+```{r, message=FALSE, fig.width=10}
 test_row_first <- function(n){
   x <- matrix(0L, nrow = n, ncol = n)
   add_to_row_first(x, 0, 1)
@@ -64,7 +64,7 @@ in column-major order, operating column-wise is quicker.
 We can also show that is more inefficient if a copy is forced to be made if we 
 pass a numeric matrix (not integer):
 
-```{r, message=FALSE, fig.width=7}
+```{r, message=FALSE, fig.width=10}
 test_col_first_copy <- function(n){
   x <- matrix(0, nrow = n, ncol = n)
   add_to_col_first(x, 0, 1)
@@ -75,7 +75,7 @@ ggplot2::autoplot(col_v_copy)
 
 Lets show how quickly we can do many steps between R and c++, modifying a large
 matrix at each step.
-```{r, message=FALSE, fig.width=7}
+```{r, message=FALSE, fig.width=10}
 pass_back_and_forth <- function(x){
   out <- rep(0, 1000)
   for(i in 1:1000){
