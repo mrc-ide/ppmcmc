@@ -16,4 +16,10 @@ RoxygenNote: 7.1.1
 LinkingTo: 
     Rcpp
 Imports: 
+    microbenchmark,
+    ggplot2,
     Rcpp
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr

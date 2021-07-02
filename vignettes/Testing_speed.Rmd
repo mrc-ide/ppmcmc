@@ -1,0 +1,93 @@
+---
+title: "Testing speed of passing objects between R and c++"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Testing_speed}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r setup}
+library(ppmcmc)
+library(microbenchmark)
+library(ggplot2)
+```
+
+Here we explore passing objects efficiently between R and c++ (using Rcpp). This will
+likely be obvious to a computer scientist but...let's learn by doing.
+
+Firstly we have written two function in c++ that take a matrix and modify it by 
+adding a constant. This is either done:
+1. Row-wise, using `add_to_rowfirst()` or
+2. Column-wise using `add_to_colfirst()`.
+Rcpp passes by reference by default and therefore these functions modify in place 
+(unless a copy of the matrix passed to them is forced to be made).
+
+To show what these functions do:
+```{r}
+x <- matrix(0L, nrow = 5, ncol = 5)
+x
+
+add_to_row_first(x, 0, 1)
+x
+
+add_to_col_first(x, 0, 1)
+x
+```
+
+We can test the efficiency impact of modifying row-wise or column-wise:
+
+```{r, message=FALSE, fig.width=7}
+test_row_first <- function(n){
+  x <- matrix(0L, nrow = n, ncol = n)
+  add_to_row_first(x, 0, 1)
+}
+test_col_first <- function(n){
+  x <- matrix(0L, nrow = n, ncol = n)
+  add_to_col_first(x, 0, 1)
+}
+row_v_col <- microbenchmark(test_row_first(1000), test_col_first(1000), times = 100)
+ggplot2::autoplot(row_v_col)
+```
+We can see that, as the  elements of the matrix are stored in the vector in memory
+in column-major order, operating column-wise is quicker.
+
+
+We can also show that is more inefficient if a copy is forced to be made if we 
+pass a numeric matrix (not integer):
+
+```{r, message=FALSE, fig.width=7}
+test_col_first_copy <- function(n){
+  x <- matrix(0, nrow = n, ncol = n)
+  add_to_col_first(x, 0, 1)
+}
+col_v_copy <- microbenchmark(test_col_first(1000), test_col_first_copy(1000), times = 100)
+ggplot2::autoplot(col_v_copy)
+```
+
+Lets show how quickly we can do many steps between R and c++, modifying a large
+matrix at each step.
+```{r, message=FALSE, fig.width=7}
+pass_back_and_forth <- function(x){
+  out <- rep(0, 1000)
+  for(i in 1:1000){
+    add_to_col_first(x, 0, i)
+    out[i] <- x[1,1]
+  }
+  return(out)
+}
+x <- matrix(0L, nrow = 1000, ncol = 1000)
+out <- pass_back_and_forth(x)
+head(out)
+ggplot2::autoplot(microbenchmark(pass_back_and_forth(x), times = 10))
+```
+
+
