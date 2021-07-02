@@ -124,7 +124,7 @@
 <span class="op">}</span>
 <span class="va">row_v_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_row_first</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col_first</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
 <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">row_v_col</span><span class="op">)</span></code></pre></div>
-<p><img src="Testing_speed_files/figure-html/unnamed-chunk-3-1.png" width="672"> We can see that, as the elements of the matrix are stored in the vector in memory in column-major order, operating column-wise is quicker.</p>
+<p><img src="Testing_speed_files/figure-html/unnamed-chunk-3-1.png" width="960"> We can see that, as the elements of the matrix are stored in the vector in memory in column-major order, operating column-wise is quicker.</p>
 <p>We can also show that is more inefficient if a copy is forced to be made if we pass a numeric matrix (not integer):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test_col_first_copy</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
@@ -133,7 +133,7 @@
 <span class="op">}</span>
 <span class="va">col_v_copy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_col_first</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col_first_copy</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
 <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">col_v_copy</span><span class="op">)</span></code></pre></div>
-<p><img src="Testing_speed_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
+<p><img src="Testing_speed_files/figure-html/unnamed-chunk-4-1.png" width="960"></p>
 <p>Lets show how quickly we can do many steps between R and c++, modifying a large matrix at each step.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pass_back_and_forth</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span>
@@ -149,7 +149,7 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
 <span class="co">#&gt; [1]  1  3  6 10 15 21</span>
 <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">pass_back_and_forth</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="Testing_speed_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
+<p><img src="Testing_speed_files/figure-html/unnamed-chunk-5-1.png" width="960"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
