@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param y value to add
 //' @export
 // [[Rcpp::export]]
-void add_to_row_first(IntegerMatrix x, int row, int y) {
+void add_to_row(IntegerMatrix x, int row, int y) {
   for(int j = 0; j < x.ncol(); j++){
     x(row, j) = x(row, j) + y;
   }
@@ -19,7 +19,7 @@ void add_to_row_first(IntegerMatrix x, int row, int y) {
 //' @param y value to add
 //' @export
 // [[Rcpp::export]]
-void add_to_col_first(IntegerMatrix x, int col, int y) {
+void add_to_col(IntegerMatrix x, int col, int y) {
   for(int j = 0; j < x.nrow(); j++){
     x(j, col) = x(j, col) + y;
   }

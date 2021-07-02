@@ -26,8 +26,8 @@ likely be obvious to a computer scientist but...let's learn by doing.
 
 Firstly we have written two function in c++ that take a matrix and modify it by 
 adding a constant. This is either done:
-1. Row-wise, using `add_to_rowfirst()` or
-2. Column-wise using `add_to_colfirst()`.
+1. Across a row, using `add_to_row()` or
+2. Down a column using `add_to_col()`.
 Rcpp passes by reference by default and therefore these functions modify in place 
 (unless a copy of the matrix passed to them is forced to be made).
 
@@ -36,25 +36,25 @@ To show what these functions do:
 x <- matrix(0L, nrow = 5, ncol = 5)
 x
 
-add_to_row_first(x, 0, 1)
+add_to_row(x, 0, 1)
 x
 
-add_to_col_first(x, 0, 1)
+add_to_col(x, 0, 1)
 x
 ```
 
 We can test the efficiency impact of modifying row-wise or column-wise:
 
 ```{r, message=FALSE, fig.width=10}
-test_row_first <- function(n){
+test_row <- function(n){
   x <- matrix(0L, nrow = n, ncol = n)
-  add_to_row_first(x, 0, 1)
+  add_to_row(x, 0, 1)
 }
-test_col_first <- function(n){
+test_col <- function(n){
   x <- matrix(0L, nrow = n, ncol = n)
-  add_to_col_first(x, 0, 1)
+  add_to_col(x, 0, 1)
 }
-row_v_col <- microbenchmark(test_row_first(1000), test_col_first(1000), times = 100)
+row_v_col <- microbenchmark(test_row(1000), test_col(1000), times = 100)
 ggplot2::autoplot(row_v_col)
 ```
 We can see that, as the  elements of the matrix are stored in the vector in memory
@@ -65,11 +65,11 @@ We can also show that is more inefficient if a copy is forced to be made if we
 pass a numeric matrix (not integer):
 
 ```{r, message=FALSE, fig.width=10}
-test_col_first_copy <- function(n){
+test_col_copy <- function(n){
   x <- matrix(0, nrow = n, ncol = n)
-  add_to_col_first(x, 0, 1)
+  add_to_col(x, 0, 1)
 }
-col_v_copy <- microbenchmark(test_col_first(1000), test_col_first_copy(1000), times = 100)
+col_v_copy <- microbenchmark(test_col(1000), test_col_copy(1000), times = 100)
 ggplot2::autoplot(col_v_copy)
 ```
 
@@ -79,7 +79,7 @@ matrix at each step.
 pass_back_and_forth <- function(x){
   out <- rep(0, 1000)
   for(i in 1:1000){
-    add_to_col_first(x, 0, i)
+    add_to_col(x, 0, i)
     out[i] <- x[1,1]
   }
   return(out)
