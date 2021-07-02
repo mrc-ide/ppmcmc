@@ -83,7 +83,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/joshuaulrich/microbenchmark/" class="external-link">microbenchmark</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
 <p>Here we explore passing objects efficiently between R and c++ (using Rcpp). This will likely be obvious to a computer scientist but…let’s learn by doing.</p>
-<p>Firstly we have written two function in c++ that take a matrix and modify it by adding a constant. This is either done: 1. Row-wise, using <code>add_to_rowfirst()</code> or 2. Column-wise using <code>add_to_colfirst()</code>. Rcpp passes by reference by default and therefore these functions modify in place (unless a copy of the matrix passed to them is forced to be made).</p>
+<p>Firstly we have written two function in c++ that take a matrix and modify it by adding a constant. This is either done: 1. Across a row, using <code><a href="../reference/add_to_row.html">add_to_row()</a></code> or 2. Down a column using <code><a href="../reference/add_to_col.html">add_to_col()</a></code>. Rcpp passes by reference by default and therefore these functions modify in place (unless a copy of the matrix passed to them is forced to be made).</p>
 <p>To show what these functions do:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0L</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
@@ -95,7 +95,7 @@
 <span class="co">#&gt; [4,]    0    0    0    0    0</span>
 <span class="co">#&gt; [5,]    0    0    0    0    0</span>
 
-<span class="fu"><a href="../reference/add_to_row_first.html">add_to_row_first</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="../reference/add_to_row.html">add_to_row</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="va">x</span>
 <span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5]</span>
 <span class="co">#&gt; [1,]    1    1    1    1    1</span>
@@ -104,7 +104,7 @@
 <span class="co">#&gt; [4,]    0    0    0    0    0</span>
 <span class="co">#&gt; [5,]    0    0    0    0    0</span>
 
-<span class="fu"><a href="../reference/add_to_col_first.html">add_to_col_first</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="../reference/add_to_col.html">add_to_col</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="va">x</span>
 <span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5]</span>
 <span class="co">#&gt; [1,]    2    1    1    1    1</span>
@@ -114,24 +114,24 @@
 <span class="co">#&gt; [5,]    1    0    0    0    0</span></code></pre></div>
 <p>We can test the efficiency impact of modifying row-wise or column-wise:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">test_row_first</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
+<code class="sourceCode R"><span class="va">test_row</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
   <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0L</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span>
-  <span class="fu"><a href="../reference/add_to_row_first.html">add_to_row_first</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+  <span class="fu"><a href="../reference/add_to_row.html">add_to_row</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="va">test_col_first</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
+<span class="va">test_col</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
   <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0L</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span>
-  <span class="fu"><a href="../reference/add_to_col_first.html">add_to_col_first</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+  <span class="fu"><a href="../reference/add_to_col.html">add_to_col</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="va">row_v_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_row_first</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col_first</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
+<span class="va">row_v_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_row</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
 <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">row_v_col</span><span class="op">)</span></code></pre></div>
 <p><img src="Testing_speed_files/figure-html/unnamed-chunk-3-1.png" width="960"> We can see that, as the elements of the matrix are stored in the vector in memory in column-major order, operating column-wise is quicker.</p>
 <p>We can also show that is more inefficient if a copy is forced to be made if we pass a numeric matrix (not integer):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">test_col_first_copy</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
+<code class="sourceCode R"><span class="va">test_col_copy</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
   <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span>
-  <span class="fu"><a href="../reference/add_to_col_first.html">add_to_col_first</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
+  <span class="fu"><a href="../reference/add_to_col.html">add_to_col</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="va">col_v_copy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_col_first</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col_first_copy</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
+<span class="va">col_v_copy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_col</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col_copy</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
 <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">col_v_copy</span><span class="op">)</span></code></pre></div>
 <p><img src="Testing_speed_files/figure-html/unnamed-chunk-4-1.png" width="960"></p>
 <p>Lets show how quickly we can do many steps between R and c++, modifying a large matrix at each step.</p>
@@ -139,7 +139,7 @@
 <code class="sourceCode R"><span class="va">pass_back_and_forth</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span>
   <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span><span class="op">)</span>
   <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">{</span>
-    <span class="fu"><a href="../reference/add_to_col_first.html">add_to_col_first</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="va">i</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/add_to_col.html">add_to_col</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">0</span>, <span class="va">i</span><span class="op">)</span>
     <span class="va">out</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">]</span>
   <span class="op">}</span>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
