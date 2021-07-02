@@ -6,8 +6,8 @@
 #' @param row Index of row to modify
 #' @param y value to add
 #' @export
-add_to_row_first <- function(x, row, y) {
-    invisible(.Call(`_ppmcmc_add_to_row_first`, x, row, y))
+add_to_row <- function(x, row, y) {
+    invisible(.Call(`_ppmcmc_add_to_row`, x, row, y))
 }
 
 #' Pass matrix by reference and edit the first column.
@@ -15,7 +15,7 @@ add_to_row_first <- function(x, row, y) {
 #' @param col Index of col to modify
 #' @param y value to add
 #' @export
-add_to_col_first <- function(x, col, y) {
-    invisible(.Call(`_ppmcmc_add_to_col_first`, x, col, y))
+add_to_col <- function(x, col, y) {
+    invisible(.Call(`_ppmcmc_add_to_col`, x, col, y))
 }
 
