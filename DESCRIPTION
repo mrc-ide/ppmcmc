@@ -1,5 +1,5 @@
 Package: ppmcmc
-Title: Efficient implementation of the human module of the Imperial malaria ODE model, for use in pMCMC fitting.
+Title: Efficient implementation of the human module of the Imperial malaria ODE model, for use in pMCMC fitting
 Version: 0.0.0.1
 Authors@R: 
     person(given = "Peter",
@@ -18,7 +18,9 @@ LinkingTo:
 Imports: 
     microbenchmark,
     ggplot2,
-    Rcpp
+    Rcpp,
+    R6,
+    rlang
 Suggests: 
     rmarkdown,
     knitr

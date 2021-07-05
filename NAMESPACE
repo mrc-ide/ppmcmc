@@ -2,5 +2,6 @@
 
 export(add_to_col)
 export(add_to_row)
+export(state)
 importFrom(Rcpp,sourceCpp)
 useDynLib(ppmcmc, .registration = TRUE)

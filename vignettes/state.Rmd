@@ -1,0 +1,70 @@
+---
+title: "state"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{state}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ppmcmc)
+```
+
+We can create a model state object in R that contains the state of each model
+element (compartment) at a single time point.
+
+```{r}
+# Age groups
+na <- 5
+# Heterogeneity groups
+nh <- 5
+# New state
+s <- state$new()
+s$S <- matrix(0L, ncol = na, nrow = nh)
+s$I <- matrix(0L, ncol = na, nrow = nh)
+s$R <- matrix(0L, ncol = na, nrow = nh)
+```
+
+The state can have custom methods that under the hood call c++ functionality:
+
+```{r}
+s$I
+s$update()
+s$I
+```
+
+This maintains passing by reference, so is fast:
+```{r}
+s$I
+system.time({
+  for(i in 1:10000){
+    s$update()
+  }
+})
+s$I
+```
+
+For the pMCMC, we will need to be able to copy particles. To do this we need to 
+force a copy of the state in memory, which can be specified with a custom deep clone method.
+
+```{r}
+# Without a deep clone, updating s, also changes s2
+s2 <- s$clone()
+s2$I
+s$update()
+s2$I
+
+# With a deep clone it doesn't
+s3 <- s$clone(deep = TRUE)
+s3$I
+s$update()
+s3$I
+```
