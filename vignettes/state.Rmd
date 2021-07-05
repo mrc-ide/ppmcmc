@@ -1,5 +1,5 @@
 ---
-title: "state"
+title: "Testing custom state object"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{state}
@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup}
