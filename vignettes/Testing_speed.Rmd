@@ -58,11 +58,12 @@ row_v_col <- microbenchmark(test_row(1000), test_col(1000), times = 100)
 ggplot2::autoplot(row_v_col)
 ```
 We can see that, as the  elements of the matrix are stored in the vector in memory
-in column-major order, operating column-wise is quicker.
+in column-major order, operating column-wise is quicker. However the differences
+are quite small (~ 100 microseconds, or 1 ten thousandth of a second).
 
 
-We can also show that is more inefficient if a copy is forced to be made if we 
-pass a numeric matrix (not integer):
+We need to be much more careful about making copies. We can show that is more 
+inefficient if a copy is forced to be made if we pass a numeric matrix (not integer):
 
 ```{r, message=FALSE, fig.width=10}
 test_col_copy <- function(n){
