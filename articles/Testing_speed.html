@@ -52,6 +52,9 @@
 <li>
       <a href="../articles/Testing_speed.html">Testing speed of passing objects between R and c++</a>
     </li>
+    <li>
+      <a href="../articles/state.html">state</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -124,8 +127,8 @@
 <span class="op">}</span>
 <span class="va">row_v_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html" class="external-link">microbenchmark</a></span><span class="op">(</span><span class="fu">test_row</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, <span class="fu">test_col</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
 <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">row_v_col</span><span class="op">)</span></code></pre></div>
-<p><img src="Testing_speed_files/figure-html/unnamed-chunk-3-1.png" width="960"> We can see that, as the elements of the matrix are stored in the vector in memory in column-major order, operating column-wise is quicker.</p>
-<p>We can also show that is more inefficient if a copy is forced to be made if we pass a numeric matrix (not integer):</p>
+<p><img src="Testing_speed_files/figure-html/unnamed-chunk-3-1.png" width="960"> We can see that, as the elements of the matrix are stored in the vector in memory in column-major order, operating column-wise is quicker. However the differences are quite small (~ 100 microseconds, or 1 ten thousandth of a second).</p>
+<p>We need to be much more careful about making copies. We can show that is more inefficient if a copy is forced to be made if we pass a numeric matrix (not integer):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">test_col_copy</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">{</span>
   <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span>

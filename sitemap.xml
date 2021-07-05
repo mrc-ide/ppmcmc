@@ -16,6 +16,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/state.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -29,5 +32,8 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/state.html</loc>
   </url>
 </urlset>
